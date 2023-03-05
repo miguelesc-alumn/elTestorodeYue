@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top_scores>
+  <score>
+    <name>Player 1</name>
+    <points>1000</points>
+  </score>
+  <score>
+    <name>Player 2</name>
+    <points>800</points>
+  </score>
+  <score>
+    <name>Player 3</name>
+    <points>500</points>
+  </score>
+</top_scores>
