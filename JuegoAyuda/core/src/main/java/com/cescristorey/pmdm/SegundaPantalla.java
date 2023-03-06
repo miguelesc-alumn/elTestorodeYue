@@ -18,11 +18,12 @@ public class SegundaPantalla implements Screen {
     OrthographicCamera guiCam;
     Rectangle nextBounds;
     Vector3 touchPoint;
-    Rectangle salir, apagar, jugar, ajustes;
+    Rectangle salir, apagar, jugar, ajustes, facil, dificil;
     TextureRegion helpRegion;
     Texture flecha;
     Table testTable;
     Stage stage;
+    float x, y; 
     
 
     public SegundaPantalla(MyGdxGame game){
@@ -41,39 +42,49 @@ public class SegundaPantalla implements Screen {
         salir = new Rectangle(25, 12, 130, 30);
         jugar = new Rectangle(325, 230, 155, 30);
         apagar = new Rectangle(500, 0, 64, 64);
+        facil = new Rectangle(250,120,64,64); 
+        dificil = new Rectangle(500,150,64,64);
+        ajustes = new Rectangle(325, 100, 155, 30);
         touchPoint = new Vector3();
-
-        // flecha = new Texture(Gdx.files.internal("adelante.png"));
-
+        
+        flecha = new Texture(Gdx.files.internal("flecha.png"));
+          x= facil.x - 120f; 
+          y = facil.y; 
     }
 
-    public void update() {
+    public void update(){
+        
         guiCam.update();
         game.batch.setProjectionMatrix(guiCam.combined);
         stage.act();
         stage.draw();
         
+        
         this.game.batch.begin();
-        this.game.font.draw(game.batch,"Ajustes", 333, 242);
+        this.game.font.draw(game.batch,"dificil", 500, 150);
+        this.game.batch.draw(flecha, x, y);
         this.game.batch.end();
-         if (Gdx.input.justTouched()) {
-            //System.out.println("x" + touchPoint.x + "y" + touchPoint.y);
+        
+        if (Gdx.input.justTouched()){
+            
             guiCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 
             if (salir.contains(touchPoint.x, touchPoint.y)) {
                     
                     exit(0);
             }
-        }
+            if(facil.contains(touchPoint.x, touchPoint.y)){
+               x= facil.x - 120f; 
+               y = facil.y; 
+            }
          
-         
-        if (Gdx.input.justTouched()) {
-            //System.out.println("x" + touchPoint.x + "y" + touchPoint.y);
-            guiCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-
             if (jugar.contains(touchPoint.x, touchPoint.y)) {
-                   //System.out.println("XXX" + touchPoint.x + "YYY" + touchPoint.y);
-                   game.setScreen(new MainScreen(this.game));
+                 
+                game.setScreen(new MainScreen(this.game));
+            }
+            if(dificil.contains(touchPoint.x, touchPoint.y)){
+                x =  dificil.x -110f; 
+                y = dificil.y -25f; 
             }
         }
 

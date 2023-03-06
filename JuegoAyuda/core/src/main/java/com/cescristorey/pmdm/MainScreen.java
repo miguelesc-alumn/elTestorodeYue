@@ -4,19 +4,14 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.TimeUtils;
-import java.io.IOException;
-import static java.lang.System.exit;
+
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class MainScreen implements Screen {
     
@@ -142,7 +137,8 @@ public class MainScreen implements Screen {
         
         else
             camera.position.x = yue.getX();
-            camera.update();
+        
+        camera.update();
       
         
 
@@ -222,6 +218,7 @@ public class MainScreen implements Screen {
     }
     
     public Shuriken disparar(){
+        
         Shuriken shu;
         shu = new Shuriken();
         shu.setPosition(10, 6);
