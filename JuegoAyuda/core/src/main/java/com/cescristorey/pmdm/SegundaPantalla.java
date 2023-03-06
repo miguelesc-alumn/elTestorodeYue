@@ -24,6 +24,7 @@ public class SegundaPantalla implements Screen {
     Table testTable;
     Stage stage;
     float x, y; 
+    boolean dificultad = false;
     
 
     public SegundaPantalla(MyGdxGame game){
@@ -61,7 +62,7 @@ public class SegundaPantalla implements Screen {
         
         
         this.game.batch.begin();
-        this.game.font.draw(game.batch,"dificil", 500, 150);
+        
         this.game.batch.draw(flecha, x, y);
         this.game.batch.end();
         
@@ -76,15 +77,22 @@ public class SegundaPantalla implements Screen {
             if(facil.contains(touchPoint.x, touchPoint.y)){
                x= facil.x - 120f; 
                y = facil.y; 
+               dificultad = false;
             }
          
             if (jugar.contains(touchPoint.x, touchPoint.y)) {
-                 
-                game.setScreen(new MainScreen(this.game));
+                if (dificultad) {
+                    game.setScreen(new Nivel1Dificil(this.game));
+                }
+                
+                else
+                    game.setScreen(new Nivel1Facil(this.game));
+                
             }
             if(dificil.contains(touchPoint.x, touchPoint.y)){
                 x =  dificil.x -110f; 
                 y = dificil.y -25f; 
+                dificultad = true;
             }
         }
 

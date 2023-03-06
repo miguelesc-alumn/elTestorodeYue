@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class MyGdxGame extends Game {
     public SpriteBatch batch;
     public BitmapFont font;
+    static int puntos;
 
 	public void create() {
             batch = new SpriteBatch();

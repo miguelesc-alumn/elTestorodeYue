@@ -14,11 +14,13 @@ import static com.cescristorey.pmdm.MyGdxGame.puntos;
 import java.util.ArrayList;
 
 
-public class SegundoLvl implements Screen {
+public class Nivel1Dificil implements Screen {
     
     MyGdxGame game;
     private float timer = 0f;
     Music musicaEpica;
+    Music musicaMuerte;
+    Music shurikenSonido;
     private float time = 0;
     private float tiempo = 1000000000;
     private final float ANIMATION_INTERVAL = 5f;
@@ -40,26 +42,20 @@ public class SegundoLvl implements Screen {
     Funguito setito;
     Rectangle espana; 
     Rupia rupi;
-    Tesoro cofrecin;
     
     int contadorMonedas = 0;
 
-    public SegundoLvl(MyGdxGame game) {
+    public Nivel1Dificil(MyGdxGame game) {
         this.game = game;
+        puntos = 0;
         guiCam = new OrthographicCamera();
         guiCam.setToOrtho(false, 800, 480);
-        map = new TmxMapLoader().load("Copia.tmx");
+        map = new TmxMapLoader().load("sinnombre.tmx");
         final float pixelsPerTile = 32;
         renderer = new OrthogonalTiledMapRenderer(map, 1 / pixelsPerTile);
         camera = new OrthographicCamera();
         stage = new Stage();
         stage.getViewport().setCamera(camera);
-        
-        cofrecin = new Tesoro();
-        cofrecin.layer = (TiledMapTileLayer) map.getLayers().get("Principal");
-        stage.addActor(cofrecin);
-        cofrecin.setPosition(62, 10);
-                
         vRupia = new ArrayList<>();
         
         for (int i = 0; i < 4; i++) {
@@ -69,21 +65,28 @@ public class SegundoLvl implements Screen {
         
         vRupia.get(0).layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(vRupia.get(0));
-        vRupia.get(0).setPosition(18, 15);
+        vRupia.get(0).setPosition(8, 15);
         
         vRupia.get(1).layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(vRupia.get(1));
-        vRupia.get(1).setPosition(41.5f, 2.5f);
+        vRupia.get(1).setPosition(27, 4.2f);
         
         vRupia.get(2).layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(vRupia.get(2));
-        vRupia.get(2).setPosition(52, 15);
+        vRupia.get(2).setPosition(60, 6);
         
         
         vShuri = new ArrayList<>();
-        musicaEpica = Gdx.audio.newMusic(Gdx.files.internal("doom.mp3"));
+        musicaEpica = Gdx.audio.newMusic(Gdx.files.internal("musiquita.mp3"));
         musicaEpica.setLooping(true);
         musicaEpica.play();
+        
+        musicaMuerte = Gdx.audio.newMusic(Gdx.files.internal("perderSonido.mp3"));
+        musicaMuerte.setLooping(false);
+        
+        shurikenSonido = Gdx.audio.newMusic(Gdx.files.internal("shurikenSonido.mp3"));
+        shurikenSonido.setLooping(false);
+        
         espana = new Rectangle(); 
         
         espana.width = 300;
@@ -95,13 +98,13 @@ public class SegundoLvl implements Screen {
         setito = new Funguito();
         setito.layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(setito);
-        setito.setPosition(10, 8);
+        setito.setPosition(58, 6);
         
         enemigo = new TioShuriken();
         enemigo.layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(enemigo);
         
-        enemigo.setPosition(39, 9);
+        enemigo.setPosition(10, 6);
         
         shuri = new Shuriken();
         
@@ -116,6 +119,8 @@ public class SegundoLvl implements Screen {
         yue.layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(yue);
         yue.setPosition(0, 10);
+        
+       
     }
     
 
@@ -143,12 +148,11 @@ public class SegundoLvl implements Screen {
         murcielagoColision();
         comprobarMuerte();
         comprobarRupias();
-        finalJuego();
-        //pasarNivel2();
+        pasarNivel2();
         
         
         time = 0;
-        if (timer > 4f && continuar == true && enemigo.pegar == true) {
+        if (timer > 2f && continuar == true && enemigo.pegar == true) {
             timer = 0;
             // Disparar la bala
             shuri = disparar();
@@ -187,22 +191,14 @@ public class SegundoLvl implements Screen {
         this.game.batch.end();
     }
     
-    public void finalJuego(){
-    
-        if (yue.dimensiones().overlaps(cofrecin.dimensiones())) {
-            game.batch.setProjectionMatrix(guiCam.combined);
-            stage.act();
-            stage.draw();
-            this.game.setScreen(new PantallaFinal(game));
-            musicaEpica.stop();
-        }
-    
-    }
-    
     public void pasarNivel2(){
         
         if (espana.overlaps(yue.dimensiones())) {
-            
+            game.batch.setProjectionMatrix(guiCam.combined);
+            stage.act();
+            stage.draw();
+            this.game.setScreen(new SegundoLvlDificil(game));
+            musicaEpica.stop();
         }
     
     }
@@ -242,22 +238,22 @@ public class SegundoLvl implements Screen {
         if (murciano.die == false) {
             
         
-            if (murciano.getX() >= murciano.xInicial + 5) {
-                murciano.xVelocity = -4f;
+            if (murciano.getX() >= murciano.xInicial + 10) {
+                murciano.xVelocity = -7f;
                 murciano.isFacingRight = false;
             }
 
-            else if (murciano.getX() <= murciano.xInicial - 5) {
-                murciano.xVelocity = 4f;
+            else if (murciano.getX() <= murciano.xInicial - 10) {
+                murciano.xVelocity = 7f;
                 murciano.isFacingRight = true;
             }
 
             if (murciano.getY() < yue.getY()) {
-                murciano.yVelocity = 2f;
+                murciano.yVelocity = 4f;
             }
 
             else if (murciano.getY() > yue.getY()) {
-                murciano.yVelocity = -2f;
+                murciano.yVelocity = -4f;
             }
 
             else if (murciano.getY() == yue.getY()) {
@@ -266,7 +262,6 @@ public class SegundoLvl implements Screen {
         
         }
     }
-    
     
     public void comprobarMuerte(){
     
@@ -292,13 +287,14 @@ public class SegundoLvl implements Screen {
         else if (yue.getX() > 64) {
             yue.setX(64);
         }
+    
     }
     
     public Shuriken disparar(){
         
         Shuriken shu;
         shu = new Shuriken();
-        shu.setPosition(39, 9);
+        shu.setPosition(10, 6);
         if (enemigo.isFacingRight) {
             shu.xVelocity = -10f;
         }
@@ -307,6 +303,16 @@ public class SegundoLvl implements Screen {
             shu.xVelocity = 10f;
         }
         
+            System.out.println("yue" + yue.getY());
+
+        if (yue.getY() < 6.2) {
+            shu.yVelocity = 0;
+            System.out.println("aaaaaa");
+        }
+
+        else{
+            shu.yVelocity = yue.getY()+6;
+        }
         
         vShuri.add(shu);
         
@@ -323,6 +329,7 @@ public class SegundoLvl implements Screen {
             shuri.destroyed =true;
             shuri.xVelocity = 0;
             shuri.yVelocity = -10f;
+            shurikenSonido.play();
             if (shuri.getY() < 0) {
                 shuri.remove();
             }
@@ -332,6 +339,7 @@ public class SegundoLvl implements Screen {
             shuri.destroyed =true;
             shuri.xVelocity = 0;
             shuri.yVelocity = -10f;
+            shurikenSonido.play();
             if (shuri.getY() < 0) {
                 shuri.remove();
             }
@@ -350,6 +358,7 @@ public class SegundoLvl implements Screen {
             shuri.destroyed =true;
             shuri.xVelocity = 0;
             shuri.yVelocity = -10f;
+            
             if (shuri.getY() < 0) {
                 shuri.remove();
             }
@@ -362,7 +371,8 @@ public class SegundoLvl implements Screen {
         yue.muerta = true;
         yue.xVelocity = 0;
         yue.yVelocity = -10f;
-        
+        musicaEpica.pause();
+        musicaMuerte.play();
         
     }
     
@@ -413,13 +423,13 @@ public class SegundoLvl implements Screen {
     }
     
     public void Enemigovista(){
-        if (yue.getX() < enemigo.getX() + 10 && yue.getX() > enemigo.getX() && enemigo.muerto == false) {
+        if (yue.getX() < enemigo.getX() + 20 && yue.getX() > enemigo.getX() && enemigo.muerto == false) {
             enemigo.isFacingRight = false;
             enemigo.pegar(true);
             continuar = true;
         }
         
-        else if (yue.getX() > enemigo.getX() - 5 && yue.getX() < enemigo.getX() && enemigo.muerto == false){
+        else if (yue.getX() > enemigo.getX() - 10 && yue.getX() < enemigo.getX() && enemigo.muerto == false){
             enemigo.isFacingRight = true;
             enemigo.pegar(true);
             continuar = true;

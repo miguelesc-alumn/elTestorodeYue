@@ -16,18 +16,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  *
  * @author chawy
  */
-public class Rupia extends Image{
+public class Tesoro extends Image{
     TextureRegion normal;
     TiledMapTileLayer layer;
     float xVelocity = 0;
     float yVelocity = 0;
 
-    public Rupia(){
+    public Tesoro(){
         final float width = 10;
         final float height = 10;
         this.setSize(1, height / width);
         
-        normal = new TextureRegion(new Texture(Gdx.files.internal("rupia.png"))); 
+        normal = new TextureRegion(new Texture(Gdx.files.internal("cofrecin.png"))); 
     }
     
     public Rectangle dimensiones(){

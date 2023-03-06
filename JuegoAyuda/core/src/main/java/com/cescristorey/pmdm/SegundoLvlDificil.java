@@ -14,7 +14,7 @@ import static com.cescristorey.pmdm.MyGdxGame.puntos;
 import java.util.ArrayList;
 
 
-public class SegundoLvl implements Screen {
+public class SegundoLvlDificil implements Screen {
     
     MyGdxGame game;
     private float timer = 0f;
@@ -44,7 +44,7 @@ public class SegundoLvl implements Screen {
     
     int contadorMonedas = 0;
 
-    public SegundoLvl(MyGdxGame game) {
+    public SegundoLvlDificil(MyGdxGame game) {
         this.game = game;
         guiCam = new OrthographicCamera();
         guiCam.setToOrtho(false, 800, 480);
@@ -148,7 +148,7 @@ public class SegundoLvl implements Screen {
         
         
         time = 0;
-        if (timer > 4f && continuar == true && enemigo.pegar == true) {
+        if (timer > 2f && continuar == true && enemigo.pegar == true) {
             timer = 0;
             // Disparar la bala
             shuri = disparar();
@@ -242,22 +242,22 @@ public class SegundoLvl implements Screen {
         if (murciano.die == false) {
             
         
-            if (murciano.getX() >= murciano.xInicial + 5) {
-                murciano.xVelocity = -4f;
+            if (murciano.getX() >= murciano.xInicial + 10) {
+                murciano.xVelocity = -8f;
                 murciano.isFacingRight = false;
             }
 
-            else if (murciano.getX() <= murciano.xInicial - 5) {
-                murciano.xVelocity = 4f;
+            else if (murciano.getX() <= murciano.xInicial - 10) {
+                murciano.xVelocity = 8f;
                 murciano.isFacingRight = true;
             }
 
             if (murciano.getY() < yue.getY()) {
-                murciano.yVelocity = 2f;
+                murciano.yVelocity = 4f;
             }
 
             else if (murciano.getY() > yue.getY()) {
-                murciano.yVelocity = -2f;
+                murciano.yVelocity = -4f;
             }
 
             else if (murciano.getY() == yue.getY()) {
@@ -413,13 +413,13 @@ public class SegundoLvl implements Screen {
     }
     
     public void Enemigovista(){
-        if (yue.getX() < enemigo.getX() + 10 && yue.getX() > enemigo.getX() && enemigo.muerto == false) {
+        if (yue.getX() < enemigo.getX() + 20 && yue.getX() > enemigo.getX() && enemigo.muerto == false) {
             enemigo.isFacingRight = false;
             enemigo.pegar(true);
             continuar = true;
         }
         
-        else if (yue.getX() > enemigo.getX() - 5 && yue.getX() < enemigo.getX() && enemigo.muerto == false){
+        else if (yue.getX() > enemigo.getX() - 10 && yue.getX() < enemigo.getX() && enemigo.muerto == false){
             enemigo.isFacingRight = true;
             enemigo.pegar(true);
             continuar = true;
