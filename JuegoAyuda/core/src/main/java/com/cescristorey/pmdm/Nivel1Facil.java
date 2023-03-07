@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import static com.cescristorey.pmdm.MyGdxGame.puntos;
 
@@ -21,6 +23,8 @@ public class Nivel1Facil implements Screen {
     Music musicaEpica;
     Music musicaMuerte;
     Music shurikenSonido;
+    Music espadaSonido;
+    Music rupiaSonido;
     private float time = 0;
     private float tiempo = 1000000000;
     private final float ANIMATION_INTERVAL = 5f;
@@ -40,14 +44,16 @@ public class Nivel1Facil implements Screen {
     TioShuriken enemigo;
     Murciegalo murciano;
     Funguito setito;
-    Rectangle espana; 
+    Rectangle espana, ajustes; 
     Rupia rupi;
-    
+    Texture engranaje;
+    Vector3 touchPoint;
     int contadorMonedas = 0;
 
     public Nivel1Facil(MyGdxGame game) {
         this.game = game;
         puntos = 0;
+        touchPoint = new Vector3();
         guiCam = new OrthographicCamera();
         guiCam.setToOrtho(false, 800, 480);
         map = new TmxMapLoader().load("sinnombre.tmx");
@@ -87,11 +93,18 @@ public class Nivel1Facil implements Screen {
         shurikenSonido = Gdx.audio.newMusic(Gdx.files.internal("shurikenSonido.mp3"));
         shurikenSonido.setLooping(false);
         
+        espadaSonido = Gdx.audio.newMusic(Gdx.files.internal("sonidoEspada.mp3"));
+        espadaSonido.setLooping(false);
+        
+        rupiaSonido = Gdx.audio.newMusic(Gdx.files.internal("rupiaSonido.mp3"));
+        rupiaSonido.setLooping(false);
+        
         espana = new Rectangle(); 
         
         espana.width = 300;
         espana.height = 500;
         espana.setPosition(64, 6);
+        ajustes = new Rectangle(5, 450, 39,64);
         
         
         
@@ -120,6 +133,7 @@ public class Nivel1Facil implements Screen {
         stage.addActor(yue);
         yue.setPosition(0, 10);
         
+        engranaje = new Texture(Gdx.files.internal("engranaje.png"));
        
     }
     
@@ -149,6 +163,7 @@ public class Nivel1Facil implements Screen {
         comprobarMuerte();
         comprobarRupias();
         pasarNivel2();
+        menuAjustes();
         
         
         time = 0;
@@ -186,8 +201,9 @@ public class Nivel1Facil implements Screen {
         stage.act(delta);
         stage.draw();
         
-         this.game.batch.begin();
-            this.game.font.draw(this.game.batch, "Puntos: " + puntos, 7, 470); 
+        this.game.batch.begin();
+        this.game.font.draw(this.game.batch, "Puntos: " + puntos, 47, 470);
+        this.game.batch.draw(engranaje,7, 450);  
         this.game.batch.end();
     }
     
@@ -214,12 +230,29 @@ public class Nivel1Facil implements Screen {
                 murciano.yVelocity = -10f;
                 murciano.xVelocity=0;
                 puntos+=200;
+                espadaSonido.play();
                 if(murciano.getY() <=0 ){
                     murciano.remove();
 
                 }
             }
             
+        }
+    }
+    
+    public void menuAjustes(){
+     
+        if (Gdx.input.justTouched()){
+            
+            guiCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            if (ajustes.contains(touchPoint.x, touchPoint.y)) {
+                game.batch.setProjectionMatrix(guiCam.combined);
+                stage.act();
+                stage.draw();
+                this.game.setScreen(new Ajustes(game, 10));
+                musicaEpica.stop();
+            }
         }
     }
     
@@ -266,7 +299,6 @@ public class Nivel1Facil implements Screen {
     public void comprobarMuerte(){
     
         if (yue.getY() <= 0) {
-            System.out.println("bajkshkhajl");
             yue.remove();
             guiCam.update();
             game.batch.setProjectionMatrix(guiCam.combined);
@@ -274,6 +306,7 @@ public class Nivel1Facil implements Screen {
             stage.draw();
             this.game.setScreen(new PantallaMuerte(game));
             musicaEpica.stop();
+            musicaMuerte.play();
         }
     
     
@@ -385,7 +418,7 @@ public class Nivel1Facil implements Screen {
             }
 
             if(yue.dimensiones().overlaps(setito.dimensiones())&& yue.isAttacking == true){
-
+                espadaSonido.play();
                 setito.die = true;
                 setito.yVelocity = -10f;
                 puntos+=150;
@@ -414,6 +447,7 @@ public class Nivel1Facil implements Screen {
                 enemigo.muerto = true;
                 enemigo.yVelocity = -10f;
                 puntos+=200;
+                espadaSonido.play();
             }
 
             if (enemigo.getY() < 0) {
@@ -450,18 +484,21 @@ public class Nivel1Facil implements Screen {
             vRupia.get(0).remove();
             
             puntos += 100;
+            rupiaSonido.play();
         }
     
         if (yue.dimensiones().overlaps(vRupia.get(1).dimensiones())) {
             vRupia.get(1).setPosition(-500, -500);    
             vRupia.get(1).remove();
             puntos += 100;
+            rupiaSonido.play();
         }
         
         if (yue.dimensiones().overlaps(vRupia.get(2).dimensiones())) {
             vRupia.get(2).setPosition(-500, -500);
             vRupia.get(2).remove();
             puntos += 100;
+            rupiaSonido.play();
         }
     }
     public void dispose() {

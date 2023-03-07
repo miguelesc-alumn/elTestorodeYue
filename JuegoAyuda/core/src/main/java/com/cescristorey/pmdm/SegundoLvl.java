@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.maps.tiled.renderers.*;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import static com.cescristorey.pmdm.MyGdxGame.puntos;
 
@@ -28,7 +29,10 @@ public class SegundoLvl implements Screen {
     boolean continuar = true;
     Stage stage;
     TiledMap map;
-    
+    Music shurikenSonido;
+    Music espadaSonido;
+    Music rupiaSonido;
+    Music musicaMuerte;
     OrthogonalTiledMapRenderer renderer;
     OrthographicCamera camera , guiCam;
     Yue yue;
@@ -38,15 +42,19 @@ public class SegundoLvl implements Screen {
     TioShuriken enemigo;
     Murciegalo murciano;
     Funguito setito;
-    Rectangle espana; 
+    Rectangle ajustes; 
     Rupia rupi;
     Tesoro cofrecin;
+    Texture engranaje;
+    Vector3 touchPoint;
+
     
     int contadorMonedas = 0;
 
     public SegundoLvl(MyGdxGame game) {
         this.game = game;
         guiCam = new OrthographicCamera();
+        touchPoint = new Vector3();
         guiCam.setToOrtho(false, 800, 480);
         map = new TmxMapLoader().load("Copia.tmx");
         final float pixelsPerTile = 32;
@@ -84,11 +92,20 @@ public class SegundoLvl implements Screen {
         musicaEpica = Gdx.audio.newMusic(Gdx.files.internal("doom.mp3"));
         musicaEpica.setLooping(true);
         musicaEpica.play();
-        espana = new Rectangle(); 
         
-        espana.width = 300;
-        espana.height = 500;
-        espana.setPosition(64, 6);
+        musicaMuerte = Gdx.audio.newMusic(Gdx.files.internal("perderSonido.mp3"));
+        musicaMuerte.setLooping(false);
+        
+        shurikenSonido = Gdx.audio.newMusic(Gdx.files.internal("shurikenSonido.mp3"));
+        shurikenSonido.setLooping(false);
+        
+        espadaSonido = Gdx.audio.newMusic(Gdx.files.internal("sonidoEspada.mp3"));
+        espadaSonido.setLooping(false);
+        
+        rupiaSonido = Gdx.audio.newMusic(Gdx.files.internal("rupiaSonido.mp3"));
+        rupiaSonido.setLooping(false);
+        
+        ajustes = new Rectangle(5, 450, 39,64);
         
         
         
@@ -116,6 +133,7 @@ public class SegundoLvl implements Screen {
         yue.layer = (TiledMapTileLayer) map.getLayers().get("Principal");
         stage.addActor(yue);
         yue.setPosition(0, 10);
+        engranaje = new Texture(Gdx.files.internal("engranaje.png"));
     }
     
 
@@ -144,6 +162,7 @@ public class SegundoLvl implements Screen {
         comprobarMuerte();
         comprobarRupias();
         finalJuego();
+        menuAjustes();
         //pasarNivel2();
         
         
@@ -182,9 +201,27 @@ public class SegundoLvl implements Screen {
         stage.act(delta);
         stage.draw();
         
-         this.game.batch.begin();
-            this.game.font.draw(this.game.batch, "Puntos: " + puntos, 7, 470); 
+        this.game.batch.begin();
+        this.game.font.draw(this.game.batch, "Puntos: " + puntos, 47, 470);
+        this.game.batch.draw(engranaje,7, 450);
         this.game.batch.end();
+    }
+    
+    
+    public void menuAjustes(){
+     
+        if (Gdx.input.justTouched()){
+            
+            guiCam.unproject(touchPoint.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+            if (ajustes.contains(touchPoint.x, touchPoint.y)) {
+                game.batch.setProjectionMatrix(guiCam.combined);
+                stage.act();
+                stage.draw();
+                this.game.setScreen(new Ajustes(game, 21));
+                musicaEpica.stop();
+            }
+        }
     }
     
     public void finalJuego(){
@@ -199,13 +236,6 @@ public class SegundoLvl implements Screen {
     
     }
     
-    public void pasarNivel2(){
-        
-        if (espana.overlaps(yue.dimensiones())) {
-            
-        }
-    
-    }
     
     public void murcielagodead(){
         if (murciano.die == false) {
@@ -218,6 +248,7 @@ public class SegundoLvl implements Screen {
                 murciano.yVelocity = -10f;
                 murciano.xVelocity=0;
                 puntos+=200;
+                espadaSonido.play();
                 if(murciano.getY() <=0 ){
                     murciano.remove();
 
@@ -323,6 +354,7 @@ public class SegundoLvl implements Screen {
             shuri.destroyed =true;
             shuri.xVelocity = 0;
             shuri.yVelocity = -10f;
+            shurikenSonido.play();
             if (shuri.getY() < 0) {
                 shuri.remove();
             }
@@ -332,6 +364,7 @@ public class SegundoLvl implements Screen {
             shuri.destroyed =true;
             shuri.xVelocity = 0;
             shuri.yVelocity = -10f;
+            shurikenSonido.play();
             if (shuri.getY() < 0) {
                 shuri.remove();
             }
@@ -362,6 +395,7 @@ public class SegundoLvl implements Screen {
         yue.muerta = true;
         yue.xVelocity = 0;
         yue.yVelocity = -10f;
+        musicaMuerte.play();
         
         
     }
@@ -379,6 +413,7 @@ public class SegundoLvl implements Screen {
                 setito.die = true;
                 setito.yVelocity = -10f;
                 puntos+=150;
+                espadaSonido.play();
                 if (setito.getY() < 0) {
                     
                     setito.remove();
@@ -404,6 +439,7 @@ public class SegundoLvl implements Screen {
                 enemigo.muerto = true;
                 enemigo.yVelocity = -10f;
                 puntos+=200;
+                espadaSonido.play();
             }
 
             if (enemigo.getY() < 0) {
@@ -438,19 +474,21 @@ public class SegundoLvl implements Screen {
         if (yue.dimensiones().overlaps(vRupia.get(0).dimensiones())) {
             vRupia.get(0).setPosition(-500, -500);
             vRupia.get(0).remove();
-            
+            rupiaSonido.play();
             puntos += 100;
         }
     
         if (yue.dimensiones().overlaps(vRupia.get(1).dimensiones())) {
             vRupia.get(1).setPosition(-500, -500);    
             vRupia.get(1).remove();
+            rupiaSonido.play();
             puntos += 100;
         }
         
         if (yue.dimensiones().overlaps(vRupia.get(2).dimensiones())) {
             vRupia.get(2).setPosition(-500, -500);
             vRupia.get(2).remove();
+            rupiaSonido.play();
             puntos += 100;
         }
     }

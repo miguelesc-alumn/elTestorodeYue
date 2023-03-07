@@ -81,12 +81,8 @@ public class SegundaPantalla implements Screen {
             }
          
             if (jugar.contains(touchPoint.x, touchPoint.y)) {
-                if (dificultad) {
-                    game.setScreen(new Nivel1Dificil(this.game));
-                }
-                
-                else
-                    game.setScreen(new Nivel1Facil(this.game));
+               
+                game.setScreen(new historia1(this.game, dificultad));
                 
             }
             if(dificil.contains(touchPoint.x, touchPoint.y)){
