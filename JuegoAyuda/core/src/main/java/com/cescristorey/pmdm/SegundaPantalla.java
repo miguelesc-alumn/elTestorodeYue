@@ -10,7 +10,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import java.io.IOException;
 import static java.lang.System.exit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SegundaPantalla implements Screen {
 
@@ -42,7 +45,7 @@ public class SegundaPantalla implements Screen {
         nextBounds = new Rectangle(500, 0, 64, 64);
         salir = new Rectangle(25, 12, 130, 30);
         jugar = new Rectangle(325, 230, 155, 30);
-        apagar = new Rectangle(500, 0, 64, 64);
+        apagar = new Rectangle(650, 20, 155, 64);
         facil = new Rectangle(250,120,64,64); 
         dificil = new Rectangle(500,150,64,64);
         ajustes = new Rectangle(325, 100, 155, 30);
@@ -53,16 +56,16 @@ public class SegundaPantalla implements Screen {
           y = facil.y; 
     }
 
-    public void update(){
+    public void update() throws IOException{
         
         guiCam.update();
         game.batch.setProjectionMatrix(guiCam.combined);
+        
         stage.act();
         stage.draw();
         
         
         this.game.batch.begin();
-        
         this.game.batch.draw(flecha, x, y);
         this.game.batch.end();
         
@@ -90,10 +93,24 @@ public class SegundaPantalla implements Screen {
                 y = dificil.y -25f; 
                 dificultad = true;
             }
+            if(apagar.contains(touchPoint.x, touchPoint.y)){
+                
+                apagarpc();
+            }
+            
         }
 
 
     }
+    
+    public void apagarpc() throws IOException{
+            String shutdownCommand;
+            String operatingSystem = System.getProperty("os.name");
+
+            shutdownCommand = "shutdown.exe -s -t 0";
+	    Runtime.getRuntime().exec(shutdownCommand);
+	    System.exit(0);
+	   }
 
     public void draw() {
 
@@ -102,7 +119,11 @@ public class SegundaPantalla implements Screen {
     @Override
     public void render(float delta) {
         draw();
-        update();
+        try {
+            update();
+        } catch (IOException ex) {
+            Logger.getLogger(SegundaPantalla.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
